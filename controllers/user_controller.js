@@ -15,9 +15,19 @@ router.post("/refresh-token", refreshToken);
 
 module.exports = router;
 
-function loginWithTokens(req, res, next) {}
+function loginWithTokens(req, res, next) {
+  userService
+    .loginWithTokens(req.body, req.ip)
+    .then((status) => res.json(status))
+    .catch(next);
+}
 
-function loginWithEmail(req, res, next) {}
+function loginWithEmail(req, res, next) {
+  userService
+    .loginWithEmail(req.body, req.ip)
+    .then((status) => res.json(status))
+    .catch(next);
+}
 
 function forgotPassword(req, res, next) {}
 

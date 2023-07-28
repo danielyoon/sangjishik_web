@@ -7,11 +7,16 @@ const schema = new Schema(
     role: { type: String, enum: ["User", "Admin"], default: "User" },
     email: String,
     passwordHash: String,
+    verified: Date,
   },
   {
     timestamps: true,
     collections: "users",
   }
 );
+
+schema.virtual("isVerified").get(function () {
+  return !!this.verified;
+});
 
 module.exports = mongoose.model("User", schema);
