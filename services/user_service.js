@@ -1,6 +1,7 @@
 var jwt = require("jsonwebtoken"),
   crypto = require("crypto"),
   bcrypt = require("bcryptjs"),
+  sendEmail = require("../components/send_email"),
   db = require("../components/mongo.js");
 
 module.exports = {
@@ -64,12 +65,22 @@ async function forgotPassword(params) {
   if (!user) return;
 
   user.resetToken = {
-    token: randomTokenString(),
+    token: randomTokenString(10),
     expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
   };
 
   await user.save();
+
+  //TODO: Send reset email here
 }
+
+async function sendVerificationEmail(params) {}
+
+async function createAccount(params) {}
+
+async function createPost(params) {}
+
+async function refreshToken(params) {}
 
 function generateJwtToken(user) {
   return jwt.sign({ sub: user.id, id: user.id }, process.env.SECRET_OR_KEY, {
@@ -81,7 +92,7 @@ function generateJwtToken(user) {
 function generateRefreshToken(user, ipAddress) {
   return new db.RefreshToken({
     user: user.id,
-    token: randomTokenString(),
+    token: randomTokenString(40),
     expires: new Date(Date.now() + 2 * 24 * 60 * 1000),
     createdByIp: ipAddress,
   });
@@ -95,6 +106,10 @@ async function getRefreshToken(token) {
   return refreshToken;
 }
 
-function randomTokenString() {
-  return crypto.randomBytes(40).toString("hex");
+function randomTokenString(number) {
+  return crypto.randomBytes(number).toString("hex");
 }
+
+async function sendVerificationCode() {}
+
+async function sendResetPassword() {}

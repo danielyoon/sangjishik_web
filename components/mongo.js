@@ -3,10 +3,7 @@ const mongoose = require("mongoose");
 mongoose.Promise = global.Promise;
 
 // Connect to MongoDB
-mongoose.connect(process.env.MONGO_URI, function (err, db) {
-  if (err) throw err;
-  console.log("Connected to MongoDB!");
-});
+mongoose.connect(process.env.MONGO_URI);
 
 mongoose.set("strictQuery", true);
 

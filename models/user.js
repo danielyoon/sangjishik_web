@@ -8,6 +8,11 @@ const schema = new Schema(
     email: String,
     passwordHash: String,
     verified: Date,
+    resetToken: {
+      token: String,
+      expires: Date,
+    },
+    nickname: String,
   },
   {
     timestamps: true,

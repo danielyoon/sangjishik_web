@@ -9,7 +9,7 @@ router.post("/login-with-email", loginWithEmail);
 router.post("/forgot-password", forgotPassword);
 router.post("/send-verification-email", sendVerificationEmail);
 router.post("/create-account", createAccount);
-router.post("/create-post", authorize(Role.Admin), createPost);
+router.post("/create-post", createPost);
 
 router.post("/refresh-token", refreshToken);
 
@@ -29,10 +29,35 @@ function loginWithEmail(req, res, next) {
     .catch(next);
 }
 
-function forgotPassword(req, res, next) {}
+function forgotPassword(req, res, next) {
+  userService
+    .forgotPassword(req.body)
+    .then(() => res.sendStatus(200))
+    .catch(next);
+}
 
-function sendVerificationEmail(req, res, next) {}
+function sendVerificationEmail(req, res, next) {
+  userService
+    .sendVerificationEmail(req.body)
+    .then(() => res.sendStatus(200))
+    .catch(next);
+}
 
-function createAccount(req, res, next) {}
+function createAccount(req, res, next) {
+  userService
+    .createAccount(req.body, req.ip)
+    .then((status) => res.json(status))
+    .catch(next);
+}
 
-function createPost(req, res, next) {}
+function createPost(req, res, next) {
+  try {
+    console.log("Title: " + req.body.title);
+    console.log(req.body);
+    res.status(200).json("Function works");
+  } catch (error) {
+    console.error("Error uploading file:", error);
+    res.status(500).json({ error: "Failed to upload file" });
+  }
+}
+function refreshToken(req, res, next) {}
