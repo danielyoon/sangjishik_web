@@ -51,13 +51,8 @@ function createAccount(req, res, next) {
 }
 
 function createPost(req, res, next) {
-  try {
-    console.log("Title: " + req.body.title);
-    console.log(req.body);
-    res.status(200).json("Function works");
-  } catch (error) {
-    console.error("Error uploading file:", error);
-    res.status(500).json({ error: "Failed to upload file" });
-  }
+  console.log("Title: " + req.body.title);
+  console.log(req.body);
+  res.status(200).json("Function works");
 }
 function refreshToken(req, res, next) {}

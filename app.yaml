@@ -1,5 +1,0 @@
-runtime: nodejs16
-
-env_variables:
-  SECRET_OR_KEY: "THISISATESTKEY"
-  MONGO_URI: "mongodb+srv://Daniel:gpoatOAT135@tougra.uxuc5xa.mongodb.net/?retryWrites=true&w=majority"
