@@ -81,9 +81,14 @@ async function createAccount(params) {}
 async function createPost(params) {}
 
 async function refreshToken(params) {
+  const count = await db.Post.countDocuments();
+  const id = `${count + 1}`;
+
   const post = new db.Post({
+    id: id,
     title: params.title,
     post: params.post,
+    tags: convertStringToArray(params.tags),
     image: params.image,
   });
 
@@ -123,3 +128,13 @@ function randomTokenString(number) {
 async function sendVerificationCode() {}
 
 async function sendResetPassword() {}
+
+function convertStringToArray(arrayString) {
+  // Remove the square brackets from the string
+  const cleanString = arrayString.replace(/[\[\]]/g, "");
+
+  // Split the string into individual elements
+  const elements = cleanString.split(", ");
+
+  return elements;
+}

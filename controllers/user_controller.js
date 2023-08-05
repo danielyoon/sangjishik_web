@@ -51,13 +51,10 @@ function createAccount(req, res, next) {
 }
 
 function createPost(req, res, next) {
-  console.log(req.body);
-  console.log(req.body.tags);
-
-  // userService
-  //   .createPost(req.body)
-  //   .then((status) => res.json(status))
-  //   .catch(next);
+  userService
+    .createPost(req.body)
+    .then((status) => res.json(status))
+    .catch(next);
 }
 
 function refreshToken(req, res, next) {}
