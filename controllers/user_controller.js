@@ -51,8 +51,13 @@ function createAccount(req, res, next) {
 }
 
 function createPost(req, res, next) {
-  console.log("Title: " + req.body.title);
-  console.log(req.body);
-  res.status(200).json("Function works");
+  print(req.body.tags);
+  print(req.body.tags[1]);
+
+  // userService
+  //   .createPost(req.body)
+  //   .then((status) => res.json(status))
+  //   .catch(next);
 }
+
 function refreshToken(req, res, next) {}

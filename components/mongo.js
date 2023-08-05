@@ -9,5 +9,6 @@ mongoose.set("strictQuery", true);
 
 module.exports = {
   User: require("../models/user"),
+  Post: require("../models/post"),
   RefreshToken: require("../models/refresh_token"),
 };
