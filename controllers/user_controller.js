@@ -51,7 +51,8 @@ function createAccount(req, res, next) {
 }
 
 function createPost(req, res, next) {
-  print(req.body);
+  console.log(req.body);
+  console.log(req.body.tags);
 
   // userService
   //   .createPost(req.body)
