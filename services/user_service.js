@@ -78,9 +78,7 @@ async function sendVerificationEmail(params) {}
 
 async function createAccount(params) {}
 
-async function createPost(params) {}
-
-async function refreshToken(params) {
+async function createPost(params) {
   const count = await db.Post.countDocuments();
   const id = `${count + 1}`;
 
@@ -96,6 +94,8 @@ async function refreshToken(params) {
 
   return post;
 }
+
+async function refreshToken(params) {}
 
 function generateJwtToken(user) {
   return jwt.sign({ sub: user.id, id: user.id }, process.env.SECRET_OR_KEY, {
