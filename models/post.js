@@ -8,6 +8,8 @@ const schema = new Schema({
   post: String,
   tags: Array,
   image: String,
+  likes: int,
+  comments: { type: Array, default: [] },
 });
 
 module.exports = mongoose.model("Post", schema);

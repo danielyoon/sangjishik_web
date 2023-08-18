@@ -4,12 +4,12 @@ var express = require("express"),
   Role = require("../components/role"),
   userService = require("../services/user_service");
 
-router.post("/login-with-tokens", loginWithTokens);
+router.post("/login-with-token", loginWithTokens);
 router.post("/login-with-email", loginWithEmail);
 router.post("/forgot-password", forgotPassword);
 router.post("/send-verification-email", sendVerificationEmail);
 router.post("/create-account", createAccount);
-router.post("/create-post", createPost);
+router.post("/create-post", authorize(Role.Admin), createPost);
 
 router.post("/refresh-token", refreshToken);
 
