@@ -8,9 +8,11 @@ module.exports = {
   loginWithTokens,
   loginWithEmail,
   forgotPassword,
+  verifyToken,
+  updatePassword,
   sendVerificationEmail,
   createAccount,
-  createPost,
+  // createPost,
   refreshToken,
 };
 
@@ -18,31 +20,11 @@ async function loginWithTokens(params, ip) {
   const refreshToken = await getRefreshToken(params.refreshToken);
   const user = refreshToken.user;
 
-  if (refreshToken.isExpired) throw "Token is expired";
-
-  await db.RefreshToken.findOneAndDelete({ user: ObjectId(user.id) });
-
-  const newRefreshToken = generateRefreshToken(user, ip);
-  await newRefreshToken.save();
-
-  const jwtToken = generateJwtToken(user);
-
-  return {
-    user,
-    refreshToken: newRefreshToken.token,
-    jwtToken,
-  };
-}
-
-async function loginWithEmail(params, ip) {
-  const user = await db.User.findOne(params.email);
-
-  if (
-    !user ||
-    !user.isVerified ||
-    !bcrypt.compareSync(password, user.passwordHash)
-  ) {
-    throw "Email or password is incorrect";
+  if (refreshToken.isExpired) {
+    return {
+      status: "EXPIRED",
+      data: null,
+    };
   }
 
   await db.RefreshToken.findOneAndDelete({ user: ObjectId(user.id) });
@@ -53,47 +35,91 @@ async function loginWithEmail(params, ip) {
   const jwtToken = generateJwtToken(user);
 
   return {
-    user,
-    refreshToken: newRefreshToken.token,
-    jwtToken,
+    stats: "SUCCESS",
+    data: { user, refreshToken: newRefreshToken.token, jwtToken },
   };
 }
 
-async function forgotPassword(params) {
+async function loginWithEmail(params, ip) {
+  const { email, password } = params;
+
+  const user = await db.User.findOne({ email });
+
+  if (!user) {
+    return {
+      status: "NONEXISTENT",
+      data: null,
+    };
+  }
+
+  if (!user.isVerified || !bcrypt.compareSync(password, user.passwordHash)) {
+    return {
+      status: "WRONG",
+      data: null,
+    };
+  }
+
+  await db.RefreshToken.findOneAndDelete({ user: ObjectId(user.id) });
+
+  const newRefreshToken = generateRefreshToken(user, ip);
+  await newRefreshToken.save();
+
+  const jwtToken = generateJwtToken(user);
+
+  return {
+    status: "SUCCESS",
+    data: {
+      user,
+      refreshToken: newRefreshToken.token,
+      jwtToken,
+    },
+  };
+}
+
+async function forgotPassword(params, ip) {
   const user = await db.User.findOne(params.email);
 
-  if (!user) return;
+  if (!user)
+    return {
+      status: "NONEXISTENT",
+    };
 
   user.resetToken = {
     token: randomTokenString(10),
-    expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
+    expires: new Date(Date.now() + 2 * 60 * 60 * 1000),
   };
 
   await user.save();
 
-  //TODO: Send reset email here
+  sendResetTokenEmail(user, ip);
+
+  return {
+    status: "SUCCESS",
+  };
 }
+
+async function verifyToken(params) {}
 
 async function sendVerificationEmail(params) {}
 
 async function createAccount(params) {}
 
-async function createPost(params) {
-  const count = await db.Post.countDocuments();
-  const id = `${count + 1}`;
+// async function createPost(params) {
+//   const count = await db.Post.countDocuments();
+//   const id = `${count + 1}`;
 
-  const post = new db.Post({
-    id: id,
-    title: params.title,
-    post: params.post,
-    tags: convertStringToArray(params.tags),
-    image: params.image,
-  });
+//   const post = new db.Post({
+//     id: id,
+//     title: params.title,
+//     post: params.post,
+//     tags: convertStringToArray(params.tags),
+//     image: params.image,
+//   });
 
-  await post.save();
+//   await post.save();
 
-  return post;
-}
+//   return post;
+// }
 
 async function refreshToken(params) {}
 
@@ -127,14 +153,14 @@ function randomTokenString(number) {
 
 async function sendVerificationCode() {}
 
-async function sendResetPassword() {}
+async function sendResetTokenEmail(user, origin) {
+  let message;
+  message = `<p>Please use the below token to reset your password:</p>
+               <p><code>${user.resetToken.token}</code></p>`;
 
-function convertStringToArray(arrayString) {
-  // Remove the square brackets from the string
-  const cleanString = arrayString.replace(/[\[\]]/g, "");
-
-  // Split the string into individual elements
-  const elements = cleanString.split(", ");
-
-  return elements;
+  await sendEmail({
+    to: user.email,
+    subject: "Reset Password",
+    html: `<h4>Reset Password Email</h4>${message}`,
+  });
 }
