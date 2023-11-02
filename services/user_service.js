@@ -100,6 +100,8 @@ async function forgotPassword(params, ip) {
 
 async function verifyToken(params) {}
 
+async function updatePassword(params) {}
+
 async function sendVerificationEmail(params) {}
 
 async function createAccount(params) {}
