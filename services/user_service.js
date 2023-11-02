@@ -77,6 +77,8 @@ async function loginWithEmail(params, ip) {
 }
 
 async function forgotPassword(params, ip) {
+  console.log(params);
+
   const user = await db.User.findOne(params.email);
 
   if (!user)
