@@ -8,7 +8,7 @@ const schema = new Schema({
   post: String,
   tags: Array,
   image: String,
-  likes: int,
+  likes: Number,
   comments: { type: Array, default: [] },
 });
 
