@@ -53,10 +53,8 @@ function loginWithEmail(req, res, next) {
 }
 
 function forgotPassword(req, res, next) {
-  console.log(req.body);
-
   userService
-    .forgotPassword(req.body, req.ip)
+    .forgotPassword(req.body)
     .then((result) => {
       if (result.status === LOGIN.SUCCESS) {
         res.sendStatus(200);

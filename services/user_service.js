@@ -76,15 +76,19 @@ async function loginWithEmail(params, ip) {
   };
 }
 
-async function forgotPassword(params, ip) {
-  console.log(params);
-
-  const user = await db.User.findOne(params.email);
+async function forgotPassword(params) {
+  const user = await db.User.findOne({ email: params.email });
 
   if (!user)
     return {
       status: "NONEXISTENT",
     };
+
+  if (user) {
+    if (!user.verified) {
+      return { status: "WRONG" };
+    }
+  }
 
   user.resetToken = {
     token: randomTokenString(10),
@@ -93,20 +97,60 @@ async function forgotPassword(params, ip) {
 
   await user.save();
 
-  sendResetTokenEmail(user, ip);
+  sendResetTokenEmail(user);
 
   return {
     status: "SUCCESS",
   };
 }
 
-async function verifyToken(params) {}
+async function verifyToken(params) {
+  const user = await db.User.findOne({ email: params.email });
+
+  if (!user) {
+    return { status: "NONEXISTENT" };
+  }
+
+  if (
+    user.resetToken &&
+    user.resetToken.token === params.token &&
+    user.resetToken.expires > Date.now()
+  ) {
+    return { status: "SUCCESS" };
+  }
+
+  return { status: "WRONG" };
+}
 
 async function updatePassword(params) {}
 
 async function sendVerificationEmail(params) {}
 
-async function createAccount(params) {}
+async function createAccount(params) {
+  let user = await db.User.findOne({ email: params.email });
+
+  if (user) {
+    if (user.verified) {
+      return { status: "WRONG" };
+    }
+
+    await db.User.deleteOne({ email: params.email });
+  }
+
+  const verificationToken = randomTokenString(10);
+  user = new db.User({
+    email: params.email,
+    resetToken: {
+      token: verificationToken,
+      expires: new Date(Date.now() + 2 * 60 * 60 * 1000),
+    },
+  });
+
+  await user.save();
+  sendVerificationCode(user);
+
+  return { status: "SUCCESS" };
+}
 
 // async function createPost(params) {
 //   const count = await db.Post.countDocuments();
@@ -155,9 +199,19 @@ function randomTokenString(number) {
   return crypto.randomBytes(number).toString("hex");
 }
 
-async function sendVerificationCode() {}
+async function sendVerificationCode(user) {
+  let message;
+  message = `<p>Please use the below token to verify your email:</p>
+               <p><code>${user.resetToken.token}</code></p>`;
 
-async function sendResetTokenEmail(user, origin) {
+  await sendEmail({
+    to: user.email,
+    subject: "Verify Email",
+    html: `<h4>Verify Email</h4>${message}`,
+  });
+}
+
+async function sendResetTokenEmail(user) {
   let message;
   message = `<p>Please use the below token to reset your password:</p>
                <p><code>${user.resetToken.token}</code></p>`;
