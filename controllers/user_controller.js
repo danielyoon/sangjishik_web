@@ -35,9 +35,6 @@ function loginWithEmail(req, res, next) {
   userService
     .loginWithEmail(req.body, req.ip)
     .then((result) => {
-      console.log(result.status);
-      console.log(LOGIN.NONEXISTENT);
-
       if (result.status === LOGIN.SUCCESS) {
         res.json(result.data);
       } else {
@@ -46,7 +43,6 @@ function loginWithEmail(req, res, next) {
             res.status(401).send("Wrong password");
             break;
           case LOGIN.NONEXISTENT: {
-            console.log("Should be here");
             res.status(404).send("Email not found");
             break;
           }
