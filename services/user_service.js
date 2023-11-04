@@ -122,9 +122,69 @@ async function verifyToken(params) {
   return { status: "WRONG" };
 }
 
-async function updatePassword(params) {}
+async function updatePassword(params) {
+  let user = await db.User.findOne({ email: params.email });
 
-async function sendVerificationEmail(params) {}
+  if (!user || !user.verified) {
+    return { status: "UNVERIFIED" };
+  }
+
+  params.passwordHash = hash(params.password);
+
+  if (!user.passwordHash) {
+    const isFirstUser =
+      (await db.User.countDocuments({ verified: { $ne: null } })) === 0;
+    user.role = isFirstUser ? "Admin" : "User";
+  }
+
+  Object.assign(user, params);
+  await user.save();
+
+  await db.RefreshToken.findOneAndDelete({ user: ObjectId(user.id) });
+
+  const newRefreshToken = generateRefreshToken(user, ip);
+  await newRefreshToken.save();
+
+  const jwtToken = generateJwtToken(user);
+
+  return {
+    status: "SUCCESS",
+    data: {
+      user: {
+        id: user._id,
+        email: user.email,
+        role: user.role,
+        dateCreated: user.dateCreated,
+      },
+      refreshToken: newRefreshToken.token,
+      jwtToken,
+    },
+  };
+}
+
+async function sendVerificationEmail(params) {
+  let user = await db.User.findOne({ email: params.email });
+
+  if (!user || user.isVerified) {
+    return {
+      status: "FAILURE",
+      message: user ? "User is already verified." : "User does not exist.",
+    };
+  }
+
+  const verificationToken = randomTokenString(10);
+
+  user.resetToken = {
+    token: verificationToken,
+    expires: new Date(Date.now() + 2 * 60 * 60 * 1000),
+  };
+
+  await user.save();
+
+  await sendVerificationCode(user);
+
+  return { status: "SUCCESS" };
+}
 
 async function createAccount(params) {
   let user = await db.User.findOne({ email: params.email });
@@ -170,6 +230,10 @@ async function createAccount(params) {
 // }
 
 async function refreshToken(params) {}
+
+function hash(password) {
+  return bcrypt.hashSync(password, 10);
+}
 
 function generateJwtToken(user) {
   return jwt.sign({ sub: user.id, id: user.id }, process.env.SECRET_OR_KEY, {

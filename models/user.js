@@ -5,7 +5,7 @@ const schema = new Schema(
   {
     dateCreated: { type: Date, default: Date.now },
     role: { type: String, enum: ["User", "Admin"], default: "User" },
-    email: String,
+    email: { type: String, required: true },
     passwordHash: String,
     verified: Date,
     resetToken: {

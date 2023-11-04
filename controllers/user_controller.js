@@ -81,7 +81,13 @@ function verifyToken(req, res, next) {
 function updatePassword(req, res, next) {
   userService
     .updatePassword(req.body)
-    .then(() => res.sendStatus(200))
+    .then((result) => {
+      if (result.status === LOGIN.SUCCESS) {
+        res.json(result.data);
+      } else {
+        res.status(404).send("Unverified");
+      }
+    })
     .catch(next);
 }
 
