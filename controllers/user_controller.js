@@ -36,7 +36,8 @@ function loginWithEmail(req, res, next) {
     .loginWithEmail(req.body, req.ip)
     .then((result) => {
       console.log(result.status);
-      console.log(LOGIN.NONEXISTENT);
+      console.log(result.status, LOGIN.NONEXISTENT);
+
       if (result.status === LOGIN.SUCCESS) {
         res.json(result.data);
       } else {
