@@ -36,12 +36,23 @@ async function loginWithTokens(params, ip) {
 
   return {
     stats: "SUCCESS",
-    data: { user, refreshToken: newRefreshToken.token, jwtToken },
+    data: {
+      user: {
+        id: user._id,
+        email: user.email,
+        role: user.role,
+        dateCreated: user.dateCreated,
+      },
+      refreshToken: newRefreshToken.token,
+      jwtToken,
+    },
   };
 }
 
 async function loginWithEmail(params, ip) {
   const { email, password } = params;
+
+  console.log(email);
 
   const user = await db.User.findOne({ email });
 
@@ -69,7 +80,12 @@ async function loginWithEmail(params, ip) {
   return {
     status: "SUCCESS",
     data: {
-      user,
+      user: {
+        id: user._id,
+        email: user.email,
+        role: user.role,
+        dateCreated: user.dateCreated,
+      },
       refreshToken: newRefreshToken.token,
       jwtToken,
     },
