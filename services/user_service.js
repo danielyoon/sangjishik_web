@@ -54,6 +54,8 @@ async function loginWithEmail(params, ip) {
 
   const user = await db.User.findOne({ email: email });
 
+  console.log(user);
+
   if (!user) {
     return {
       status: "NONEXISTENT",
