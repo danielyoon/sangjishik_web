@@ -52,9 +52,7 @@ async function loginWithTokens(params, ip) {
 async function loginWithEmail(params, ip) {
   const { email, password } = params;
 
-  console.log(email);
-
-  const user = await db.User.findOne({ email });
+  const user = await db.User.findOne({ email: email });
 
   if (!user) {
     return {

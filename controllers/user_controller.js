@@ -32,8 +32,6 @@ function loginWithTokens(req, res, next) {
 }
 
 function loginWithEmail(req, res, next) {
-  console.log(req.body);
-
   userService
     .loginWithEmail(req.body, req.ip)
     .then((result) => {
