@@ -27,7 +27,7 @@ async function loginWithTokens(params, ip) {
     };
   }
 
-  await db.RefreshToken.findOneAndDelete({ user: ObjectId(user.id) });
+  await db.RefreshToken.findOneAndDelete({ user: user.id });
 
   const newRefreshToken = generateRefreshToken(user, ip);
   await newRefreshToken.save();
@@ -68,7 +68,7 @@ async function loginWithEmail(params, ip) {
     };
   }
 
-  await db.RefreshToken.findOneAndDelete({ user: ObjectId(user.id) });
+  await db.RefreshToken.findOneAndDelete({ user: user.id });
 
   const newRefreshToken = generateRefreshToken(user, ip);
   await newRefreshToken.save();
@@ -156,11 +156,7 @@ async function updatePassword(params, ipAddress) {
   Object.assign(user, params);
   await user.save();
 
-  console.log(ipAddress);
-
   await db.RefreshToken.findOneAndDelete({ user: user.id });
-
-  console.log(ipAddress);
 
   const newRefreshToken = generateRefreshToken(user, ipAddress);
   await newRefreshToken.save();
