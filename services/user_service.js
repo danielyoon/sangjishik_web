@@ -149,21 +149,27 @@ async function updatePassword(params, ip) {
 
   params.passwordHash = hash(params.password);
 
-  if (!user.passwordHash) {
-    const isFirstUser =
-      (await db.User.countDocuments({ verified: { $ne: null } })) === 0;
-    user.role = isFirstUser ? "Admin" : "User";
-  }
+  console.log(params.passwordHash);
+
+  const isFirstUser =
+    (await db.User.countDocuments({ verified: { $ne: null } })) === 0;
+  user.role = isFirstUser ? "Admin" : "User";
 
   Object.assign(user, params);
   await user.save();
+
+  console.log(user.role);
 
   await db.RefreshToken.findOneAndDelete({ user: ObjectId(user.id) });
 
   const newRefreshToken = generateRefreshToken(user, ip);
   await newRefreshToken.save();
 
+  console.log(newRefreshToken.token);
+
   const jwtToken = generateJwtToken(user);
+
+  console.log(jwtToken);
 
   return {
     status: "SUCCESS",
