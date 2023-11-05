@@ -119,6 +119,8 @@ async function forgotPassword(params) {
 }
 
 async function verifyToken(params) {
+  console.log(params);
+
   const user = await db.User.findOne({ email: params.email });
 
   if (!user) {
