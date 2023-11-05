@@ -119,8 +119,6 @@ async function forgotPassword(params) {
 }
 
 async function verifyToken(params) {
-  console.log(params);
-
   const user = await db.User.findOne({ email: params.email });
 
   if (!user) {
@@ -132,6 +130,10 @@ async function verifyToken(params) {
     user.resetToken.token === params.token &&
     user.resetToken.expires > Date.now()
   ) {
+    if (!user.isVerified) {
+      user.verified = Date.now();
+      await user.save();
+    }
     return { status: "SUCCESS" };
   }
 

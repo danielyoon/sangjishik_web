@@ -66,8 +66,6 @@ function forgotPassword(req, res, next) {
 }
 
 function verifyToken(req, res, next) {
-  console.log(req.body);
-
   userService
     .verifyToken(req.body)
     .then((result) => {
