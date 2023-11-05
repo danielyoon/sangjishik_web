@@ -141,7 +141,11 @@ async function verifyToken(params) {
 }
 
 async function updatePassword(params) {
+  console.log(params);
+
   let user = await db.User.findOne({ email: params.email });
+
+  console.log(user.verified);
 
   if (!user || !user.verified) {
     return { status: "UNVERIFIED" };
