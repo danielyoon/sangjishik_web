@@ -118,10 +118,3 @@ function createAccount(req, res, next) {
 }
 
 // function refreshToken(req, res, next) {}
-
-// function createPost(req, res, next) {
-//   userService
-//     .createPost(req.body)
-//     .then((status) => res.json(status))
-//     .catch(next);
-// }

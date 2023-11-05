@@ -12,7 +12,6 @@ module.exports = {
   updatePassword,
   sendVerificationEmail,
   createAccount,
-  // createPost,
   refreshToken,
 };
 
@@ -161,11 +160,7 @@ async function updatePassword(params, ipAddress) {
   const newRefreshToken = generateRefreshToken(user, ipAddress);
   await newRefreshToken.save();
 
-  console.log(newRefreshToken.token);
-
   const jwtToken = generateJwtToken(user);
-
-  console.log(jwtToken);
 
   return {
     status: "SUCCESS",
@@ -232,23 +227,6 @@ async function createAccount(params) {
   return { status: "SUCCESS" };
 }
 
-// async function createPost(params) {
-//   const count = await db.Post.countDocuments();
-//   const id = `${count + 1}`;
-
-//   const post = new db.Post({
-//     id: id,
-//     title: params.title,
-//     post: params.post,
-//     tags: convertStringToArray(params.tags),
-//     image: params.image,
-//   });
-
-//   await post.save();
-
-//   return post;
-// }
-
 async function refreshToken(params) {}
 
 function hash(password) {
@@ -283,6 +261,7 @@ function randomTokenString(number) {
   return crypto.randomBytes(number).toString("hex");
 }
 
+//TODO: Probably should make this look a little better
 async function sendVerificationCode(user) {
   let message;
   message = `<p>Please use the below token to verify your email:</p>
