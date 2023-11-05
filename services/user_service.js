@@ -140,12 +140,8 @@ async function verifyToken(params) {
   return { status: "WRONG" };
 }
 
-async function updatePassword(params) {
-  console.log(params);
-
+async function updatePassword(params, ip) {
   let user = await db.User.findOne({ email: params.email });
-
-  console.log(user.verified);
 
   if (!user || !user.verified) {
     return { status: "UNVERIFIED" };

@@ -80,7 +80,7 @@ function verifyToken(req, res, next) {
 
 function updatePassword(req, res, next) {
   userService
-    .updatePassword(req.body)
+    .updatePassword(req.body, req.ip)
     .then((result) => {
       if (result.status === LOGIN.SUCCESS) {
         res.json(result.data);
