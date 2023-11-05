@@ -14,7 +14,7 @@ router.post("/send-verification-email", sendVerificationEmail);
 router.post("/create-account", createAccount);
 // router.post("/create-post", authorize(Role.Admin), createPost);
 
-router.post("/refresh-token", refreshToken);
+// router.post("/refresh-token", refreshToken);
 
 module.exports = router;
 
@@ -109,7 +109,7 @@ function createAccount(req, res, next) {
     .createAccount(req.body, req.ip)
     .then((result) => {
       if (result.status === LOGIN.SUCCESS) {
-        res.json(result.data);
+        res.sendStatus(200);
       } else {
         res.status(404).send("Already existing email");
       }
@@ -117,7 +117,7 @@ function createAccount(req, res, next) {
     .catch(next);
 }
 
-function refreshToken(req, res, next) {}
+// function refreshToken(req, res, next) {}
 
 // function createPost(req, res, next) {
 //   userService
