@@ -158,7 +158,7 @@ async function updatePassword(params, ipAddress) {
 
   console.log(ipAddress);
 
-  await db.RefreshToken.findOneAndDelete({ user: ObjectId(user.id) });
+  await db.RefreshToken.findOneAndDelete({ user: user.id });
 
   console.log(ipAddress);
 
