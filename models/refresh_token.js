@@ -6,17 +6,11 @@ const schema = new Schema({
   token: String,
   created: { type: Date, default: Date.now },
   createdByIp: String,
-  expireAt: { type: Date, default: Date.now() },
+  expires: Date,
 });
 
 schema.virtual("isExpired").get(function () {
-  return Date.now() >= this.expireAt;
+  return Date.now() >= this.expires;
 });
-
-schema.virtual("isActive").get(function () {
-  return !this.isExpired;
-});
-
-schema.index({ expireAt: 1 }, { expireAfterSeconds: 172800 });
 
 module.exports = mongoose.model("RefreshToken", schema);

@@ -140,7 +140,7 @@ async function verifyToken(params) {
   return { status: "WRONG" };
 }
 
-async function updatePassword(params, ip) {
+async function updatePassword(params, ipAddress) {
   let user = await db.User.findOne({ email: params.email });
 
   if (!user || !user.verified) {
@@ -149,20 +149,18 @@ async function updatePassword(params, ip) {
 
   params.passwordHash = hash(params.password);
 
-  console.log(params.passwordHash);
-
   const isFirstUser =
-    (await db.User.countDocuments({ verified: { $ne: null } })) === 0;
+    (await db.User.countDocuments({ verified: { $ne: null } })) === 1;
   user.role = isFirstUser ? "Admin" : "User";
 
   Object.assign(user, params);
   await user.save();
 
-  console.log(user.role);
-
   await db.RefreshToken.findOneAndDelete({ user: ObjectId(user.id) });
 
-  const newRefreshToken = generateRefreshToken(user, ip);
+  console.log(ipAddress);
+
+  const newRefreshToken = generateRefreshToken(user, ipAddress);
   await newRefreshToken.save();
 
   console.log(newRefreshToken.token);
@@ -279,7 +277,7 @@ async function getRefreshToken(token) {
   const refreshToken = await db.RefreshToken.findOne({ token }).populate(
     "user"
   );
-  if (!refreshToken || !refreshToken.isActive) throw "Invalid token";
+  if (!refreshToken || refreshToken.isExpired) throw "Invalid token";
   return refreshToken;
 }
 
