@@ -16,13 +16,8 @@ module.exports = {
 };
 
 async function loginWithTokens(params, ip) {
-  console.log(params.token);
-
   const refreshToken = await getRefreshToken(params.token);
   const user = refreshToken.user;
-
-  console.log(user);
-  console.log(refreshToken.isExpired);
 
   if (refreshToken.isExpired) {
     return {
