@@ -12,9 +12,8 @@ router.post("/verify-token", verifyToken);
 router.post("/update-password", updatePassword);
 router.post("/send-verification-email", sendVerificationEmail);
 router.post("/create-account", createAccount);
-// router.post("/create-post", authorize(Role.Admin), createPost);
-
-// router.post("/refresh-token", refreshToken);
+router.post("/logout", authorize(), logout);
+router.post("/refresh-token", refreshToken);
 
 module.exports = router;
 
@@ -117,4 +116,28 @@ function createAccount(req, res, next) {
     .catch(next);
 }
 
-// function refreshToken(req, res, next) {}
+function logout(req, res, next) {
+  userService
+    .logout(req.body)
+    .then((result) => {
+      if (result.status === LOGIN.SUCCESS) {
+        res.sendStatus(200);
+      } else {
+        res.status(404).send("Invalid token");
+      }
+    })
+    .catch(next);
+}
+
+function refreshToken(req, res, next) {
+  userService
+    .refreshToken(req.body, req.ip)
+    .then((result) => {
+      if (result.status === "SUCCESS") {
+        res.json(result.data);
+      } else {
+        res.status(404).send("Invalid token");
+      }
+    })
+    .catch(next);
+}

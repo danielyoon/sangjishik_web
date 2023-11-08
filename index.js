@@ -12,7 +12,6 @@ if (environment == "development") require("dotenv").config({ silent: true });
 
 app.use(cookieParser());
 
-// allow cors requests from any origin and with credentials
 app.use(
   cors({
     origin: (origin, callback) => callback(null, true),
@@ -23,10 +22,11 @@ app.use(
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// api routes
+// API routes
 app.use("/users", require("./controllers/user_controller"));
+app.use("/posts", require("./controllers/post_controller"));
 
-// global error handler
+// Global Error Handler
 app.use(errorHandler);
 
 server.listen(port, () => {

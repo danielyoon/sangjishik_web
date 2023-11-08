@@ -12,6 +12,7 @@ module.exports = {
   updatePassword,
   sendVerificationEmail,
   createAccount,
+  logout,
   refreshToken,
 };
 
@@ -227,7 +228,50 @@ async function createAccount(params) {
   return { status: "SUCCESS" };
 }
 
-async function refreshToken(params) {}
+async function logout(params) {
+  const refreshToken = await getRefreshToken(params.token);
+  const user = refreshToken.user;
+
+  if (refreshToken.isExpired) {
+    return {
+      status: "EXPIRED",
+      data: null,
+    };
+  }
+
+  await db.RefreshToken.findOneAndDelete({ user: user.id });
+
+  return {
+    status: "SUCCESS",
+  };
+}
+
+async function refreshToken(params, ip) {
+  const refreshToken = await getRefreshToken(params.token);
+  const user = refreshToken.user;
+
+  if (refreshToken.isExpired) {
+    return {
+      status: "EXPIRED",
+      data: null,
+    };
+  }
+
+  await db.RefreshToken.findOneAndDelete({ user: user.id });
+
+  const newRefreshToken = generateRefreshToken(user, ip);
+  await newRefreshToken.save();
+
+  const jwtToken = generateJwtToken(user);
+
+  return {
+    status: "SUCCESS",
+    data: {
+      refreshToken: newRefreshToken.token,
+      jwtToken,
+    },
+  };
+}
 
 function hash(password) {
   return bcrypt.hashSync(password, 10);
