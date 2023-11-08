@@ -28,7 +28,7 @@ function authorize(roles = []) {
     }),
 
     async (req, res, next) => {
-      console.log(req.auth.id);
+      console.log(req.auth);
       const user = await db.User.findById(req.auth.id);
 
       if (!user || (roles.length && !roles.includes(user.role))) {
