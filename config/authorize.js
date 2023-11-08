@@ -13,22 +13,9 @@ function authorize(roles = []) {
     jwt({
       secret,
       algorithms: ["HS256"],
-      getToken: function fromHeaderOrQuerystring(req) {
-        console.log(req.headers.authorization);
-        if (
-          req.headers.authorization &&
-          req.headers.authorization.split(" ")[0] === "Bearer"
-        ) {
-          return req.headers.authorization.split(" ")[1];
-        } else if (req.query && req.query.token) {
-          return req.query.token;
-        }
-        return null;
-      },
     }),
 
     async (req, res, next) => {
-      console.log(req.auth);
       const user = await db.User.findById(req.auth.id);
 
       if (!user || (roles.length && !roles.includes(user.role))) {
