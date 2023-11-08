@@ -6,6 +6,8 @@ module.exports = {
 };
 
 async function createPost(params) {
+  console.log(params);
+
   const documentCount = await db.Post.countDocuments();
 
   var post = new db.Post({

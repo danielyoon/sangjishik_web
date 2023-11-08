@@ -14,6 +14,7 @@ function authorize(roles = []) {
       secret,
       algorithms: ["HS256"],
       getToken: function fromHeaderOrQuerystring(req) {
+        console.log(req.headers.authorization);
         if (
           req.headers.authorization &&
           req.headers.authorization.split(" ")[0] === "Bearer"
@@ -27,6 +28,7 @@ function authorize(roles = []) {
     }),
 
     async (req, res, next) => {
+      console.log(req.auth.id);
       const user = await db.User.findById(req.auth.id);
 
       if (!user || (roles.length && !roles.includes(user.role))) {
