@@ -278,7 +278,6 @@ function hash(password) {
 }
 
 function generateJwtToken(user) {
-  console.log(user.id);
   return jwt.sign({ sub: user.id, id: user.id }, process.env.SECRET_OR_KEY, {
     expiresIn: "24h",
   });
