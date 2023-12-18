@@ -12,28 +12,17 @@
 
 ### ✨ [Demo](www.sangjishik.com)
 
-## Install
-
-```sh
-npm install
-```
-
-## Usage
-
-```sh
-npm run start
-```
-
 ## Author
 
 👤 **Daniel Yoon**
 
-* Website: www.sangjishik.com
-* Github: [@danielyoon](https://github.com/danielyoon)
+- Website: www.sangjishik.com
+- Github: [@danielyoon](https://github.com/danielyoon)
 
 ## Show your support
 
 Give a ⭐️ if this project helped you!
 
-***
+---
+
 _This README was generated with ❤️ by [readme-md-generator](https://github.com/kefranabg/readme-md-generator)_
